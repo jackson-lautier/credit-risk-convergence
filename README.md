@@ -16,7 +16,8 @@ manuscript.
 This repository includes:
 
 - **clean_data** The filtered loan data summarized in the _Data_ section of
-the companion manuscript.  It is used for all empirical results.
+the companion manuscript.  It is used for all empirical results. Also includes
+simulation inputs.
 
 - **code** Replication code files.  To replicate the data processing, use
 'data_processing.R'.  To move directly to reproducing the manuscript results,
