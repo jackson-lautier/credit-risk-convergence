@@ -18,10 +18,24 @@ This repository includes:
 - **clean_data** The filtered loan data summarized in the _Data_ section of
 the companion manuscript.  It is used for all empirical results.
 
-- **replication_code** Complete replication code to reproduce all figures
-and tables in the companion manuscript.  Note that it begins with the
-raw ABS data files, which have been scraped from
+- **code** Replication code files.  To replicate the data processing, use
+'data_processing.R'.  To move directly to reproducing the manuscript results,
+use 'data_analysis.R'.  The loan savings calculations are performed in
+'refi_svgs.xlsx'. 
+
+- **raw_data** These are the raw ABS data files, which have been scraped from
 [EDGAR](https://www.sec.gov/edgar/search-and-access).
+
+## Workflow
+
+There are two options.  A user may start with the raw data and process the data
+into the clean data ('data_processing.R').  This will create a new folder
+'processed_data', which will match the 'clean_data' folder.
+Alternatively, a user may start
+directly with the clean data and produce the manuscript results ('data_analysis.R').
+These results, including figures, will be produced in a new folder,
+'results'.
+
 
 ## Links
 
