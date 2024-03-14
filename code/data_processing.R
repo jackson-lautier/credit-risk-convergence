@@ -10,6 +10,8 @@
 # 2024
 #
 #R version 4.3.2 (2023-10-31 ucrt)
+#RStudio 2023.03.0+386 "Cherry Blossom" Release
+#(3c53477afb13ab959aeb5b34df1f10c237b256c3, 2023-03-09) for Windows
 ######################################################################################
 ######################################################################################
 ######################################################################################
@@ -603,7 +605,7 @@ source("./code/default_time.R")
   #393 'bad' loans of 31,613
   
   drv = drv[!(drv$assetNumber %in% bad_data),]
-  write.csv(drv,"./processed_data/drv31220_2019.csv")
+  write.csv(drv,"./processed_data/drv31221_2019.csv")
   rm(list=ls())
 }
 

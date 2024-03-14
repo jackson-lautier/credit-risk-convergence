@@ -9,6 +9,8 @@
 # 2024
 #
 #R version 4.3.2 (2023-10-31 ucrt)
+#RStudio 2023.03.0+386 "Cherry Blossom" Release
+#(3c53477afb13ab959aeb5b34df1f10c237b256c3, 2023-03-09) for Windows
 ######################################################################################
 ######################################################################################
 ######################################################################################
@@ -44,65 +46,7 @@ dir.create("./results/")
 
 ######################################################################################
 ######################################################################################
-# FIGURE 1: Classical Consumer Auto Securitization Loss Curves
-######################################################################################
-######################################################################################
-
-{
-path = "./clean_data/"
-sdart = read.csv(paste(path,"sdart20192_2017.csv",sep=""))
-cmax = read.csv(paste(path,"cmax6835_2017.csv",sep=""))
-drv = read.csv(paste(path,"drv28920_2017.csv",sep=""))
-aart = read.csv(paste(path,"aart2171_2017.csv",sep=""))
-
-dfs = data.frame("age" = drv$X, "outcome" = drv$D)
-cts = aggregate(outcome ~ age, dfs, sum)
-cts$run_tot = cumsum(cts$outcome)
-cts$def_perc = cts$run_tot / nrow(drv)
-
-dfp = data.frame("age" = cmax$X, "outcome" = cmax$D)
-ctp = aggregate(outcome ~ age, dfp, sum)
-ctp$run_tot = cumsum(ctp$outcome)
-ctp$def_perc = ctp$run_tot / nrow(cmax)
-
-dfa = data.frame("age" = sdart$X, "outcome" = sdart$D)
-cta = aggregate(outcome ~ age, dfa, sum)
-cta$run_tot = cumsum(cta$outcome)
-cta$def_perc = cta$run_tot / nrow(sdart)
-
-ctp$risk = "cmax"
-cts$risk = "drv"
-cta$risk = "sdart"
-
-plot_dat = rbind(ctp, cts, cta)
-plot_dat$def_perc = plot_dat$def_perc * 100
-
-ggplot(data=plot_dat,
-       aes(x=age,y=def_perc,color=risk))+
-  geom_point(size=1) +
-  geom_line(linewidth=0.5) +
-  xlab("Securitization Age (Months)") +
-  ylab("Cumulative Defaults (%)") +
-  theme_bw() +
-  theme(legend.position="none") +
-  guides(linetype=guide_legend(""),
-         color=guide_legend("")) +
-  theme(axis.title.x=element_text(size=9, family="Times New Roman"),
-        axis.text.x=element_text(size=9, family="Times New Roman"),
-        axis.text.y=element_text(size=9, family="Times New Roman"),
-        axis.title.y=element_text(size=9,family="Times New Roman"),
-        legend.text=element_text(size=9, family="Times New Roman"),
-        strip.text.y = element_text(size = 9, family="Times New Roman"),
-        legend.title=element_text(size=10, family="Times New Roman")) +
-  geom_vline(xintercept=40, color="grey",linetype=2)
-#save plot, if desired
-ggsave("./results/loss_curves.pdf",height=4,width=6,device = cairo_pdf)
-rm(list=ls())
-}
-
-######################################################################################
-######################################################################################
-# FIGURE 2: Credit Risk Convergence: Subprime and Prime Loans
+# FIGURE 1: Credit Risk Convergence: Subprime and Prime Loans
 ######################################################################################
 ######################################################################################
 
@@ -649,7 +593,7 @@ rm(list=ls())
 
 ######################################################################################
 ######################################################################################
-# FIGURE 4: Estimated Expected Rolling Risk-Adjusted Return by Age, Issuance
+# FIGURE 3: Estimated Expected Rolling Risk-Adjusted Return by Age, Issuance
 ######################################################################################
 ######################################################################################
 
@@ -947,7 +891,7 @@ rm(list=ls())
 
 ######################################################################################
 ######################################################################################
-# FIGURE 5: Outstanding Loan-to-value by Loan Age, Risk Band
+# FIGURE 4: Outstanding Loan-to-value by Loan Age, Risk Band
 ######################################################################################
 ######################################################################################
 
@@ -1118,7 +1062,7 @@ rm(list=ls())
 
 ######################################################################################
 ######################################################################################
-# FIGURE 6: Consumer Prepayment Behavior, used Autos, Economic Stimulus
+# FIGURE 5: Consumer Prepayment Behavior, used Autos, Economic Stimulus
 ######################################################################################
 ######################################################################################
 
@@ -1423,7 +1367,7 @@ rm(list=ls())
 
 ######################################################################################
 ######################################################################################
-# FIGURE B1: Credit Risk Convergence: All Risk Bands (2017)
+# FIGURE 6: Credit Risk Convergence: All Risk Bands (2017)
 ######################################################################################
 ######################################################################################
 
@@ -1542,6 +1486,65 @@ rm(list=ls())
   ggsave("./results/haz_grid_default2017.pdf",height=5,width=5,device = cairo_pdf)
   rm(list=ls())
 }
+
+######################################################################################
+######################################################################################
+# FIGURE A1: Classical Consumer Auto Securitization Loss Curves
+######################################################################################
+######################################################################################
+
+{
+  path = "./clean_data/"
+  sdart = read.csv(paste(path,"sdart20192_2017.csv",sep=""))
+  cmax = read.csv(paste(path,"cmax6835_2017.csv",sep=""))
+  drv = read.csv(paste(path,"drv28920_2017.csv",sep=""))
+  aart = read.csv(paste(path,"aart2171_2017.csv",sep=""))
+  
+  dfs = data.frame("age" = drv$X, "outcome" = drv$D)
+  cts = aggregate(outcome ~ age, dfs, sum)
+  cts$run_tot = cumsum(cts$outcome)
+  cts$def_perc = cts$run_tot / nrow(drv)
+  
+  dfp = data.frame("age" = cmax$X, "outcome" = cmax$D)
+  ctp = aggregate(outcome ~ age, dfp, sum)
+  ctp$run_tot = cumsum(ctp$outcome)
+  ctp$def_perc = ctp$run_tot / nrow(cmax)
+  
+  dfa = data.frame("age" = sdart$X, "outcome" = sdart$D)
+  cta = aggregate(outcome ~ age, dfa, sum)
+  cta$run_tot = cumsum(cta$outcome)
+  cta$def_perc = cta$run_tot / nrow(sdart)
+  
+  ctp$risk = "cmax"
+  cts$risk = "drv"
+  cta$risk = "sdart"
+  
+  plot_dat = rbind(ctp, cts, cta)
+  plot_dat$def_perc = plot_dat$def_perc * 100
+  
+  ggplot(data=plot_dat,
+         aes(x=age,y=def_perc,color=risk))+
+    geom_point(size=1) +
+    geom_line(linewidth=0.5) +
+    xlab("Securitization Age (Months)") +
+    ylab("Cumulative Defaults (%)") +
+    theme_bw() +
+    theme(legend.position="none") +
+    guides(linetype=guide_legend(""),
+           color=guide_legend("")) +
+    theme(axis.title.x=element_text(size=9, family="Times New Roman"),
+          axis.text.x=element_text(size=9, family="Times New Roman"),
+          axis.text.y=element_text(size=9, family="Times New Roman"),
+          axis.title.y=element_text(size=9,family="Times New Roman"),
+          legend.text=element_text(size=9, family="Times New Roman"),
+          strip.text.y = element_text(size = 9, family="Times New Roman"),
+          legend.title=element_text(size=10, family="Times New Roman")) +
+    geom_vline(xintercept=40, color="grey",linetype=2)
+  #save plot, if desired
+  ggsave("./results/loss_curves.pdf",height=4,width=6,device = cairo_pdf)
+  rm(list=ls())
+}
+
 
 ######################################################################################
 ######################################################################################
