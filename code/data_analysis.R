@@ -631,8 +631,12 @@ dir.create("./results/")
   }
   df_s = data.frame("default" = sdartR$D,
                     "time" = sdartR$Xc,
+                    "risk_cat" = sdartR$risk_cat_ir,
                     "recovery_amt" = recovery_val / sdartR$originalLoanAmount)
   df_s = subset(df_s,df_s$default == 1)
+  
+  #for info
+  aggregate(recovery_amt ~ risk_cat, data = df_s, mean)
   
   #CMAX
   recovery_val = c()
@@ -656,8 +660,12 @@ dir.create("./results/")
   }
   df_c = data.frame("default" = cmaxR$D,
                     "time" = cmaxR$Xc,
+                    "risk_cat" = cmaxR$risk_cat_ir,
                     "recovery_amt" = recovery_val / cmaxR$originalLoanAmount)
   df_c = subset(df_c,df_c$default == 1)
+  
+  #for info
+  aggregate(recovery_amt ~ risk_cat, data = df_c, mean)
   
   #DRIVE
   recovery_val = c()
@@ -681,8 +689,12 @@ dir.create("./results/")
   }
   df_d = data.frame("default" = drvR$D,
                     "time" = drvR$Xc,
+                    "risk_cat" = drvR$risk_cat_ir,
                     "recovery_amt" = recovery_val / drvR$originalLoanAmount)
   df_d = subset(df_d,df_d$default == 1)
+  
+  #for info
+  aggregate(recovery_amt ~ risk_cat, data = df_d, mean)
   
   #AART
   recovery_val = c()
@@ -706,44 +718,95 @@ dir.create("./results/")
   }
   df_a = data.frame("default" = aartR$D,
                     "time" = aartR$Xc,
+                    "risk_cat" = aartR$risk_cat_ir,
                     "recovery_amt" = recovery_val / aartR$originalLoanAmount)
   df_a = subset(df_a,df_a$default == 1)
+  
+  #for info
+  aggregate(recovery_amt ~ risk_cat, data = df_a, mean)
   
   #COMBINE ALL RECOVERIES INTO ONE DATA FRAME
   df = rbind(df_a,df_s,df_c,df_d)
   
-  def_time = sort(unique(df$time))
+  #calculate recovery estimate by risk band
+  rb = unique(df$risk_cat)
+  plot_df = data.frame("Month" = c(),
+                       "Obs.Avg" = c(),
+                       "Value" = c(),
+                       "Type" = c(),
+                       "Risk.Band" = c())
+  #for rolling exp return calc
+  ret_df = data.frame("Month" = c(), "Recovery" = c(), "Risk.Band" = c())
   
-  Z_t = vector()
-  for (i in def_time) {
-    Z_t = append(Z_t,AVERAGEIF(df$time,i,df$recovery_amt))
+  for(r in rb){
+    
+    r_df = subset(df, risk_cat == r)
+    
+    #print(r)
+    #print(nrow(r_df))
+    #print(sum(r_df$recovery_amt == 0))
+    
+    r_df = subset(r_df, recovery_amt > 0)
+    
+    def_time = sort(unique(r_df$time))
+    
+    Z_t = vector()
+    for (i in def_time) {
+      Z_t = append(Z_t,AVERAGEIF(r_df$time,i,r_df$recovery_amt))
+    }
+    
+    #smoothed depreciation curve
+    x <- def_time
+    y <- Z_t
+    lo <- loess(y~x)
+    dep <- data.frame("Month" = x, "Obs.Avg" = Z_t, "Smoothed" = predict(lo))
+    
+    theta = c(0.04, 2.3, 12)
+    #fit a gamma kernel
+    gam_kern_fit = function(theta){
+      a = theta[1]
+      b = theta[2]
+      c = theta[3]
+      
+      fit1 = (a) * ((dep$Month)^(b-1)) * (exp(-dep$Month / c))
+      fit2 = dep$Smoothed
+      
+      return( sum( (fit1 - fit2)^2 ) )
+      
+    }
+    
+    p_est =
+      optim(c(0.05, 2.5, 12), gam_kern_fit, method="L-BFGS-B",
+            lower = 0,
+            upper = Inf)
+    
+    #from Excel Solver, fit a gamma kernel
+    a	= p_est$par[1]
+    b	= p_est$par[2]
+    c	= p_est$par[3]
+    
+    fit = (a) * ((dep$Month)^(b-1)) * (exp(-dep$Month / c))
+    
+    dep$Fitted = fit
+    dep$Risk.Band = r
+    
+    append_df = data.frame("Month" = rep(dep$Month,2),
+                           "Obs.Avg" = rep(dep$Obs.Avg,2),
+                           "Value" = c(dep$Smoothed,dep$Fitted),
+                           "Type" = c(rep("Loess",length(dep$Month)),rep("Gamma-Kern",length(dep$Month))),
+                           "Risk.Band" = r)
+    
+    plot_df = rbind(plot_df, append_df)
+    
+    ret_append_df = data.frame("Month" = c(1:73),
+                               "Recovery" = (a) * ((c(1:73))^(b-1)) * (exp(-c(1:73) / c)),
+                               "Risk.Band" = r)
+    
+    ret_df = rbind(ret_df, ret_append_df)
+    
   }
   
-  #smoothed depreciation curve
-  x <- def_time
-  y <- Z_t
-  lo <- loess(y~x)
-  dep <- data.frame("Month" = x, "Obs.Avg" = Z_t, "Smoothed" = predict(lo))
-  
-  #write the loess estimates
-  write.csv(dep,"./results/recovery_est2017.csv")
-  
-  #from Excel Solver, fit a gamma kernel
-  a	= 0.0396784842573534
-  b	= 2.31865986209146
-  c	= 11.9499144731075
-  
-  fit = (a) * ((dep$Month)^(b-1)) * (exp(-dep$Month / c))
-  
-  dep$Fitted = fit
-  
-  plot_df = data.frame("Month" = rep(dep$Month,2),
-                       "Obs.Avg" = rep(dep$Obs.Avg,2),
-                       "Value" = c(dep$Smoothed,dep$Fitted),
-                       "Type" = c(rep("Loess",length(dep$Month)),rep("Gamma-Kern",length(dep$Month))))
-  
-  write.csv(plot_df, "./results/recov_fitted2017.csv")
-  plot_df = read.csv("./results/recov_fitted2017.csv")[,-1]
+  plot_df$Risk.Band = factor(plot_df$Risk.Band, levels=c('deep_subprime','subprime','near_prime','prime','super_prime'))
   
   ggplot(data=plot_df, aes(x=Month)) +
     geom_point(aes(y=Obs.Avg)) + 
@@ -757,18 +820,16 @@ dir.create("./results/")
     theme(axis.title.x=element_text(size=9, family="Times New Roman"),
           axis.title.y=element_text(size=9, family="Times New Roman"),
           legend.text=element_text(size=9, family="Times New Roman"),
-          legend.position = "bottom")
-  #axis.text.y=element_blank(),
-  #axis.ticks.y=element_blank())
+          strip.text.x = element_text(size = 7.25, family="Times New Roman"),
+          strip.text.y = element_text(size = 7.25, family="Times New Roman"),
+          legend.position = "bottom") +
+    facet_grid(cols = vars(Risk.Band))
+  
   #save, if desired
   ggsave("./results/recovery_est2017.pdf",height=4,width=6, device = cairo_pdf)
   
-  #for rolling exp return calc
-  fit = (a) * ((c(1:73))^(b-1)) * (exp(-c(1:73) / c))
-  df = data.frame("Month" = c(1:73), "Recovery" = fit)
-  write.csv(df,"./results/recovery_est2017.csv")
-  
-  dep[which.max(dep$Obs.Avg),]
+  #to create figure
+  write.csv(ret_df,"./results/recovery_est2017_riskband.csv")
   rm(list=ls())
 }
 #figure plot
@@ -776,7 +837,7 @@ dir.create("./results/")
   #monthly rolling interest rate calculations
   path = "./results/"
   lam_def = read.csv(paste(path,"default72_2017.csv",sep="/"))
-  recov = read.csv(paste(path,"recovery_est2017.csv",sep="/"))
+  recov = read.csv(paste(path,"recovery_est2017_riskband.csv",sep="/"))
   
   path = "./clean_data/"
   
@@ -818,8 +879,12 @@ dir.create("./results/")
   }
   
   #recoveries
-  rec_amt = function(time,loan_value){
-    return(loan_value * recov$Recovery[time])
+  rec_amt = function(time,loan_value,risk_band){
+    
+    rb_rec = recov$Recovery[(recov$Month == time) &
+                              (recov$Risk.Band == risk_band)]
+    
+    return(loan_value * rb_rec)
   }
   
   #remove ages not shared by all categories
@@ -842,7 +907,7 @@ dir.create("./results/")
     loan_amort = 
       sapply(c(1:loan_term),amort_bal,orig_bal=loan_amt,int_rate=loan_ir,payment=loan_pmt)
     recov_amt = 
-      sapply(c(1:loan_term),rec_amt,loan_value = loan_amt)
+      sapply(c(1:loan_term),rec_amt,loan_value = loan_amt, risk_band = cat)
     #probabilities for risk category
     lam_probs = lam_def$lam_hat[lam_def$cat == cat]
     
@@ -883,7 +948,8 @@ dir.create("./results/")
           strip.text.y = element_text(size = 9, family="Times New Roman"),
           legend.title=element_text(size=10, family="Times New Roman")) +
     geom_hline(yintercept=0, color="grey") #+
-  #facet_grid(rows=vars(year))
+  
+  
   #save, if desired
   ggsave("./results/rolling_exp_ret2.pdf",height=4,width=6,device = cairo_pdf)
   rm(list=ls())
