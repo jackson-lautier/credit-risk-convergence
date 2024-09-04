@@ -1731,6 +1731,7 @@ dir.create("./results/")
   plot_grid(g_cs, g_ir, g_cs2, g_ir2, nrow=4)
   #save plot, if desired
   ggsave("./results/2017_summary2.pdf",height=4,width=6,device = cairo_pdf)
+  file.remove('./Rplot001.pdf')
   rm(list=ls())
 }
 
@@ -1854,7 +1855,7 @@ dir.create("./results/")
   path = "./clean_data/"
   sdart = read.csv(paste(path,"sdart19962_2019.csv",sep=""))
   cmax = read.csv(paste(path,"cmax11724_2019.csv",sep=""))
-  drv = read.csv(paste(path,"drv31220_2019.csv",sep=""))
+  drv = read.csv(paste(path,"drv31221_2019.csv",sep=""))
   aart = read.csv(paste(path,"aart2895_2019.csv",sep=""))
   
   nrow(sdart); nrow(cmax); nrow(drv); nrow(aart)
@@ -1874,7 +1875,7 @@ dir.create("./results/")
   path = "./clean_data/"
   sdart = read.csv(paste(path,"sdart19962_2019.csv",sep=""))
   cmax = read.csv(paste(path,"cmax11724_2019.csv",sep=""))
-  drv = read.csv(paste(path,"drv31220_2019.csv",sep=""))
+  drv = read.csv(paste(path,"drv31221_2019.csv",sep=""))
   aart = read.csv(paste(path,"aart2895_2019.csv",sep=""))
   
   #Z: Time-of-event
@@ -2115,7 +2116,7 @@ dir.create("./results/")
   path = "./clean_data/"
   sdart = read.csv(paste(path,"sdart19962_2019.csv",sep=""))
   cmax = read.csv(paste(path,"cmax11724_2019.csv",sep=""))
-  drv = read.csv(paste(path,"drv31220_2019.csv",sep=""))
+  drv = read.csv(paste(path,"drv31221_2019.csv",sep=""))
   aart = read.csv(paste(path,"aart2895_2019.csv",sep=""))
   
   #Z: Time-of-event
