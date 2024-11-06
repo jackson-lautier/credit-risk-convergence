@@ -806,7 +806,11 @@ dir.create("./results/")
     
   }
   
-  plot_df$Risk.Band = factor(plot_df$Risk.Band, levels=c('deep_subprime','subprime','near_prime','prime','super_prime'))
+  #make labels nicer
+  plot_df$Risk.Band = ifelse(plot_df$Risk.Band == "deep_subprime", "deep subprime", plot_df$Risk.Band)
+  plot_df$Risk.Band = ifelse(plot_df$Risk.Band == "near_prime", "near-prime", plot_df$Risk.Band)
+  plot_df$Risk.Band = ifelse(plot_df$Risk.Band == "super_prime", "super-prime", plot_df$Risk.Band)
+  plot_df$Risk.Band = factor(plot_df$Risk.Band, levels=c('deep subprime','subprime','near-prime','prime','super-prime'))
   
   ggplot(data=plot_df, aes(x=Month)) +
     geom_point(aes(y=Obs.Avg)) + 
@@ -922,12 +926,12 @@ dir.create("./results/")
   
   df17 = data.frame("time" = rep(calc_months,5),
                     "value" = c(m_return[1,],m_return[2,],m_return[3,],m_return[4,],m_return[5,]),
-                    "risk_band" = factor(c(rep("deep_subprime",length(calc_months)),
+                    "risk_band" = factor(c(rep("deep subprime",length(calc_months)),
                                            rep("subprime",length(calc_months)),
-                                           rep("near_prime",length(calc_months)),
+                                           rep("near-prime",length(calc_months)),
                                            rep("prime",length(calc_months)),
-                                           rep("super_prime",length(calc_months))), 
-                                         levels=c('deep_subprime','subprime','near_prime','prime','super_prime')))
+                                           rep("super-prime",length(calc_months))), 
+                                         levels=c('deep subprime','subprime','near-prime','prime','super-prime')))
   df17$year = "2017"
   df = df17
   
@@ -1056,7 +1060,11 @@ dir.create("./results/")
   
   #create the side by side box plots
   master$month = as.factor(master$month)
-  master$cat = factor(master$cat, levels=c("deep_subprime", "subprime", "near_prime","prime","super_prime"))
+  #make labels nicer
+  master$cat = ifelse(master$cat == "deep_subprime", "deep subprime", master$cat)
+  master$cat = ifelse(master$cat == "near_prime", "near-prime", master$cat)
+  master$cat = ifelse(master$cat == "super_prime", "super-prime", master$cat)
+  master$cat = factor(master$cat, levels=c("deep subprime", "subprime", "near-prime","prime","super-prime"))
   master$ltv = master$ltv * 100
   
   ggplot(data = master, aes(x=month, y=ltv)) +
@@ -1525,8 +1533,21 @@ dir.create("./results/")
   }
   
   test_dat$high_low = ifelse(test_dat$cat == test_dat$low_cat, "row", "column")
-  test_dat$low_cat_f = factor(test_dat$low_cat, levels=c('deep_subprime','subprime','near_prime','prime','super_prime'))
-  test_dat$high_cat_f = factor(test_dat$high_cat, levels=c('deep_subprime','subprime','near_prime','prime','super_prime'))
+  #make labels nicer
+  test_dat$cat = ifelse(test_dat$cat == "deep_subprime", "deep subprime", test_dat$cat)
+  test_dat$low_cat = ifelse(test_dat$low_cat == "deep_subprime", "deep subprime", test_dat$low_cat)
+  test_dat$high_cat = ifelse(test_dat$high_cat == "deep_subprime", "deep subprime", test_dat$high_cat)
+  
+  test_dat$cat = ifelse(test_dat$cat == "near_prime", "near-prime", test_dat$cat)
+  test_dat$low_cat = ifelse(test_dat$low_cat == "near_prime", "near-prime", test_dat$low_cat)
+  test_dat$high_cat = ifelse(test_dat$high_cat == "near_prime", "near-prime", test_dat$high_cat)
+  
+  test_dat$cat = ifelse(test_dat$cat == "super_prime", "super-prime", test_dat$cat)
+  test_dat$low_cat = ifelse(test_dat$low_cat == "super_prime", "super-prime", test_dat$low_cat)
+  test_dat$high_cat = ifelse(test_dat$high_cat == "super_prime", "super-prime", test_dat$high_cat)
+  
+  test_dat$low_cat_f = factor(test_dat$low_cat, levels=c('deep subprime','subprime','near-prime','prime','super-prime'))
+  test_dat$high_cat_f = factor(test_dat$high_cat, levels=c('deep subprime','subprime','near-prime','prime','super-prime'))
   
   ggplot(data=test_dat,
          aes(x=month,y=lambda,linetype=high_low))+
@@ -1663,7 +1684,7 @@ dir.create("./results/")
     #scale_y_continuous(name="", labels = scales::percent_format(accuracy = 1))+
     theme(axis.title.x=element_text(size=8, family="Times New Roman"),
           axis.title.y=element_text(size=8, family="Times New Roman"),
-          strip.text.x = element_text(size = 8, family="Times New Roman", margin = margin(b=0,t=0)),
+          strip.text.x = element_text(size = 7, family="Times New Roman", margin = margin(b=0.05,t=0.05, unit="cm")),
           legend.text=element_text(size=8, family="Times New Roman"),
           axis.text.x = element_text(size=7, family="Times New Roman"),
           #axis.title.y=element_blank(),
@@ -1680,7 +1701,7 @@ dir.create("./results/")
     #scale_y_continuous(name="", labels = scales::percent_format(accuracy = 1))+
     theme(axis.title.x=element_text(size=8, family="Times New Roman"),
           axis.title.y=element_text(size=8, family="Times New Roman"),
-          strip.text.x = element_text(size = 8, family="Times New Roman", margin = margin(b=0,t=0)),
+          strip.text.x = element_text(size = 7, family="Times New Roman", margin = margin(b=0.05,t=0.05, unit="cm")),
           legend.text=element_text(size=8, family="Times New Roman"),
           axis.text.x = element_text(size=7, family="Times New Roman"),
           #axis.title.y=element_blank(),
@@ -1688,7 +1709,12 @@ dir.create("./results/")
           axis.ticks.y=element_blank()) +
     facet_grid(cols = vars(bond))
   
-  df_cs$risk_band = factor(df_cs$risk_band, levels = c("deep_subprime", "subprime", "near_prime", "prime","super_prime"))
+  #make labels nicer
+  df_cs$risk_band = ifelse(df_cs$risk_band == "deep_subprime", "deep subprime", df_cs$risk_band)
+  df_cs$risk_band = ifelse(df_cs$risk_band == "near_prime", "near-prime", df_cs$risk_band)
+  df_cs$risk_band = ifelse(df_cs$risk_band == "super_prime", "super-prime", df_cs$risk_band)
+  
+  df_cs$risk_band = factor(df_cs$risk_band, levels = c("deep subprime", "subprime", "near-prime", "prime","super-prime"))
   
   g_cs2 <- ggplot(data=df_cs, aes(x=value, fill=type)) +
     geom_density(alpha=0.5, fill="lightblue") +
@@ -1699,7 +1725,7 @@ dir.create("./results/")
     #scale_y_continuous(name="", labels = scales::percent_format(accuracy = 1))+
     theme(axis.title.x=element_text(size=8, family="Times New Roman"),
           axis.title.y=element_text(size=8, family="Times New Roman"),
-          strip.text.x = element_text(size = 8, family="Times New Roman", margin = margin(b=0,t=0)),
+          strip.text.x = element_text(size = 7, family="Times New Roman", margin = margin(b=0.05,t=0.05, unit="cm")),
           legend.text=element_text(size=8, family="Times New Roman"),
           axis.text.x = element_text(size=7, family="Times New Roman"),
           #axis.title.y=element_blank(),
@@ -1707,7 +1733,12 @@ dir.create("./results/")
           axis.ticks.y=element_blank()) +
     facet_grid(cols = vars(risk_band))
   
-  df_ir$risk_band = factor(df_ir$risk_band, levels = c("deep_subprime", "subprime", "near_prime", "prime","super_prime"))
+  #make labels nicer
+  df_ir$risk_band = ifelse(df_ir$risk_band == "deep_subprime", "deep subprime", df_ir$risk_band)
+  df_ir$risk_band = ifelse(df_ir$risk_band == "near_prime", "near-prime", df_ir$risk_band)
+  df_ir$risk_band = ifelse(df_ir$risk_band == "super_prime", "super-prime", df_ir$risk_band)
+  
+  df_ir$risk_band = factor(df_ir$risk_band, levels = c("deep subprime", "subprime", "near-prime", "prime","super-prime"))
   
   g_ir2 <- ggplot(data=df_ir, aes(x=value, fill=type)) +
     geom_density(alpha=0.5, fill="lightblue") +
@@ -1718,8 +1749,8 @@ dir.create("./results/")
     #scale_y_continuous(name="", labels = scales::percent_format(accuracy = 1))+
     theme(axis.title.x=element_text(size=8, family="Times New Roman"),
           axis.title.y=element_text(size=8, family="Times New Roman"),
-          strip.text.x = element_text(size = 8, family="Times New Roman", margin = margin(b=0,t=0)),
-          legend.text=element_text(size=6, family="Times New Roman"),
+          strip.text.x = element_text(size = 7, family="Times New Roman", margin = margin(b=0.05,t=0.05, unit="cm")),
+          legend.text=element_text(size=7, family="Times New Roman"),
           axis.text.x = element_text(size=7, family="Times New Roman"),
           #axis.title.y=element_blank(),
           axis.text.y=element_blank(),
@@ -1841,7 +1872,7 @@ dir.create("./results/")
 ######################################################################################
 
 #see 'recovery_est2017.pdf', which may be generated by
-#the top half of FIGURE 4 script above
+#the top half of FIGURE 3 script above
 
 ######################################################################################
 ######################################################################################
@@ -2506,8 +2537,21 @@ dir.create("./results/")
   }
   
   test_dat$high_low = ifelse(test_dat$cat == test_dat$low_cat, "row", "column")
-  test_dat$low_cat_f = factor(test_dat$low_cat, levels=c('deep_subprime','subprime','near_prime','prime','super_prime'))
-  test_dat$high_cat_f = factor(test_dat$high_cat, levels=c('deep_subprime','subprime','near_prime','prime','super_prime'))
+  #make labels nicer
+  test_dat$cat = ifelse(test_dat$cat == "deep_subprime", "deep subprime", test_dat$cat)
+  test_dat$low_cat = ifelse(test_dat$low_cat == "deep_subprime", "deep subprime", test_dat$low_cat)
+  test_dat$high_cat = ifelse(test_dat$high_cat == "deep_subprime", "deep subprime", test_dat$high_cat)
+  
+  test_dat$cat = ifelse(test_dat$cat == "near_prime", "near-prime", test_dat$cat)
+  test_dat$low_cat = ifelse(test_dat$low_cat == "near_prime", "near-prime", test_dat$low_cat)
+  test_dat$high_cat = ifelse(test_dat$high_cat == "near_prime", "near-prime", test_dat$high_cat)
+  
+  test_dat$cat = ifelse(test_dat$cat == "super_prime", "super-prime", test_dat$cat)
+  test_dat$low_cat = ifelse(test_dat$low_cat == "super_prime", "super-prime", test_dat$low_cat)
+  test_dat$high_cat = ifelse(test_dat$high_cat == "super_prime", "super-prime", test_dat$high_cat)
+  
+  test_dat$low_cat_f = factor(test_dat$low_cat, levels=c('deep subprime','subprime','near-prime','prime','super-prime'))
+  test_dat$high_cat_f = factor(test_dat$high_cat, levels=c('deep subprime','subprime','near-prime','prime','super-prime'))
   
   ggplot(data=test_dat,
          aes(x=month,y=lambda,linetype=high_low))+
@@ -3012,8 +3056,14 @@ dir.create("./results/")
   compare_group = c("deep_subprime","subprime","near_prime","prime","super_prime")
   plot_group = c("deep_subprime","subprime","near_prime","prime","super_prime")
   plot_df = sum_dat_def[sum_dat_def$cat %in% plot_group,]
+  
+  #make labels nicer
+  plot_df$cat = ifelse(plot_df$cat == "deep_subprime", "deep subprime", plot_df$cat)
+  plot_df$cat = ifelse(plot_df$cat == "near_prime", "near-prime", plot_df$cat)
+  plot_df$cat = ifelse(plot_df$cat == "super_prime", "super-prime", plot_df$cat)
+  
   plot_df$cat = factor(plot_df$cat,
-                       levels=c('deep_subprime','subprime','near_prime','prime','super_prime'))
+                       levels=c('deep subprime','subprime','near-prime','prime','super-prime'))
   ggplot(data=plot_df,
          aes(x=Age,y=lam_hat,linetype=cat)) +
     geom_line() +
@@ -3383,6 +3433,16 @@ dir.create("./results/")
   ribbon_df = rbind(ribbon_df1, ribbon_df2)
   line_df = rbind(line_df1, line_df2)
   
+  #make names nicer
+  ribbon_df$type = ifelse(ribbon_df$type == "true", "CI: True", ribbon_df$type)
+  ribbon_df$type = ifelse(ribbon_df$type == "empirical", "CI: Empirical", ribbon_df$type)
+  ribbon_df$type = ifelse(ribbon_df$type == "estimate", "CI: Estimate", ribbon_df$type)
+  ribbon_df$cause = ifelse(ribbon_df$cause == "Cause_01", "Cause 01", "Cause 02")
+  
+  line_df$type = ifelse(line_df$type == "lam_true", "Point: True",
+                         "Point: Estimate")
+  line_df$cause = ifelse(line_df$cause == "Cause_01", "Cause 01", "Cause 02")
+  
   ggplot()+
     geom_ribbon(data=ribbon_df,aes(x=month,ymin=ci_low,
                                    ymax=ci_high,fill=type),alpha=0.5)+
@@ -3391,6 +3451,11 @@ dir.create("./results/")
     ylab("Estimated Cause-Specific Hazard + 95% Confidence Intervals") +
     theme_bw() +
     theme(legend.position="bottom") +
+    #scale_fill_manual(values=c("red", "green", "blue"),
+    #                  labels = c("CI: Empirical", "CI: Est.", "CI: True"),
+    #                  alpha = c(0.5, 0.5, 0.5)) +
+    #scale_linetype_manual(values=c("solid", "dashed"),
+    #                      labels = c("Point: Estimate", "Point: True")) +
     guides(linetype=guide_legend(""),
            fill=guide_legend("")) +
     #scale_fill_grey() +
