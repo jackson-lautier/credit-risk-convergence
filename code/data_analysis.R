@@ -3439,8 +3439,8 @@ dir.create("./results/")
   ribbon_df$type = ifelse(ribbon_df$type == "estimate", "CI: Estimate", ribbon_df$type)
   ribbon_df$cause = ifelse(ribbon_df$cause == "Cause_01", "Cause 01", "Cause 02")
   
-  line_df$type = ifelse(line_df$type == "lam_true", "Point: True",
-                         "Point: Estimate")
+  line_df$type = ifelse(line_df$type == "lam_true", "CSH: True",
+                         "CSH: Estimate")
   line_df$cause = ifelse(line_df$cause == "Cause_01", "Cause 01", "Cause 02")
   
   ggplot()+
