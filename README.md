@@ -4,11 +4,11 @@
 
 ## Introduction
 
-This repository is intended as an online supplement to the manuscript,
-_On the convergence of credit risk in current consumer
-automobile loans_.  A recent public version of the
-manuscript may be found on [arXiv](https://arxiv.org/abs/2211.09176)
-or [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4278917).
+This repository is intended as an online supplement to the manuscript:
+
+Lautier, J. P., Pozdnyakov, V., Yan, J. (2024). _On the convergence of credit risk in current consumer automobile loans_.  Journal of the Royal Statistical Society Series A: Statistics in Society, Accepted. [https://doi.org/10.1093/jrsssa/qnae137][https://doi.org/10.1093/jrsssa/qnae137]
+
+
 Please attribute any citations of this repository to the original
 manuscript.
 
@@ -41,6 +41,8 @@ These results, including figures, will be produced in a new folder,
 ## Links
 
 - [Repo](https://github.com/jackson-lautier/credit-risk-convergence)
+
+- [Publication](https://doi.org/10.1093/jrsssa/qnae137)
 
 - [arXiv](https://arxiv.org/abs/2211.09176)
 
