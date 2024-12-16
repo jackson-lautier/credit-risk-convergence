@@ -6,7 +6,7 @@
 
 This repository is intended as an online supplement to the manuscript:
 
-Lautier, J. P., Pozdnyakov, V., Yan, J. (2024). _On the convergence of credit risk in current consumer automobile loans_.  Journal of the Royal Statistical Society Series A: Statistics in Society, Accepted. [https://doi.org/10.1093/jrsssa/qnae137][https://doi.org/10.1093/jrsssa/qnae137]
+Lautier, J. P., Pozdnyakov, V., Yan, J. (2024). _On the convergence of credit risk in current consumer automobile loans_.  Journal of the Royal Statistical Society Series A: Statistics in Society, Accepted. (https://doi.org/10.1093/jrsssa/qnae137)[https://doi.org/10.1093/jrsssa/qnae137]
 
 
 Please attribute any citations of this repository to the original
